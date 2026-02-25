@@ -1,0 +1,440 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LHS - Document Tracking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #e9ecef;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .sidebar {
+            background-color: white;
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar .nav-link {
+            color: #495057;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-released {
+            background-color: #f8d7da;
+            color: #bd610b;
+        }
+        .document-card:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .progress-tracker {
+            position: relative;
+            height: 5px;
+            background-color: #e9ecef;
+            margin: 20px 0;
+        }
+        .progress-tracker .progress-step {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+        }
+        .progress-tracker .step-1 { left: 0%; background-color: var(--primary-color); width: 25%; }
+        .progress-tracker .step-2 { left: 25%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-3 { left: 50%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-4 { left: 75%; background-color: #adb5bd; width: 25%; }
+        .tracker-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 3px solid;
+            border-radius: 50%;
+            top: -8px;
+        }
+        .tracker-point.active {
+            border-color: var(--primary-color);
+        }
+        .tracker-point.inactive {
+            border-color: #adb5bd;
+        }
+        .tracker-point-1 { left: 0%; }
+        .tracker-point-2 { left: 25%; }
+        .tracker-point-3 { left: 50%; }
+        .tracker-point-4 { left: 75%; }
+        .tracker-label {
+            position: absolute;
+            top: 15px;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 80px;
+            margin-left: -40px;
+        }
+        .form-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .search-highlight {
+            background-color: yellow;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Dashboard.html">
+                <img src="lhs-reglogo.png" alt="LHS Logo">
+                <span class="ms-2">LHS - Document Tracking System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> LHS REGISTRAR ADMIN                       </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse py-3" id="sidebarMenu">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Dashboard.html">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="NewDocument.html">
+                            <i class="bi bi-file-earmark-plus"></i> New Document
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="NewDocument.html">
+                            <i class="bi bi-inbox"></i> Incoming
+                            <span class="badge bg-danger float-end">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Outgoing.html">
+                            <i class="bi bi-send"></i> Outgoing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Search.html">
+                            <i class="bi bi-search"></i> Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Reports.html">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Users.html">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </li>
+                                        <li class="nav-item">
+                        <a class="nav-link " href="Archive.html">
+                            <i class="bi bi-archive"></i> Archive
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                                    <!-- Dashboard Page -->
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">Today</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">Week</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary">Month</button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-primary">
+                                <i class="bi bi-plus-circle"></i> New Document
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pending</h5>
+                                    <h2 class="card-text">12</h2>
+                                    <p class="card-text"><small>Awaiting response</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">For Action</h5>
+                                    <h2 class="card-text">48</h2>
+                                    <p class="card-text"><small>Requiring your attention</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Released</h5>
+                                    <h2 class="card-text">5</h2>
+                                    <p class="card-text"><small>Already been released</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h5 class="card-title">Completed</h5>
+                                    <h2 class="card-text">180</h2>
+                                    <p class="card-text"><small>This month</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Documents -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Recent Documents</h5>
+                                <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tracking #</th>
+                                            <th>Document Type</th>
+                                            <th>Student</th>
+                                            <th>Grade&Section</th>
+                                            <th>Contact# | Email</th>
+                                            <th>From (Prev.School)</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>PRNQ-2025-00123</td>
+                                            <td>Form 137/SF10</td>
+                                            <td>Christopher C. Llorca</td>
+                                            <td>12 - Ritchie</td>
+                                            <td>09123456789</td>
+                                            <td>TALA HIGH SCHOOL</td>
+                                            <td>2023-06-15</td>
+                                            <td><span class="status-badge status-pending">Pending Review</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PRNQ-2025-00125</td>
+                                            <td>Form 137/SF10</td>
+                                            <td>Raphael Genesis Ong</td>
+                                            <td>12 - Ritchie</td>
+                                            <td>09123456789</td>
+                                            <td>BAGONG SILANG HIGH SCHOOL</td>
+                                            <td>2023-06-14</td>
+                                            <td><span class="status-badge status-approved">Approved</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PRNQ-2025-00126</td>
+                                            <td>Form 137/SF10</td>
+                                            <td>Christian Camacho</td>
+                                            <td>12 - Ritchie</td>
+                                            <td>Camacho@gmail.com</td>
+                                            <td>NATIONAL UNIVERSITY</td>
+                                            <td>2023-06-12</td>
+                                            <td><span class="status-badge status-completed">Completed</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PRNQ-2025-00127</td>
+                                            <td>Form 137/SF10</td>
+                                            <td>Jake Lucenara</td>
+                                            <td>12 - Ritchie</td>
+                                            <td>Lucenara@gmail.com</td>
+                                            <td>LAGRO HIGH SCHOOL</td>
+                                            <td>2023-06-12</td>
+                                            <td><span class="status-badge status-released">Released</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>PRNQ-2025-00127</td>
+                                            <td>Form 137/SF10</td>
+                                            <td>Aiden Ignacio</td>
+                                            <td>12 - Ritchie</td>
+                                            <td>Ignacio@gmail.com</td>
+                                            <td>NATIONAL UNIVERSITY</td>
+                                            <td>2023-06-12</td>
+                                            <td><span class="status-badge status-rejected">Rejected</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="text-muted">© 2025 Lagro High School - Document Tracking System</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="text-muted">Version 1.0.0</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar on mobile
+             document.querySelector('.navbar-toggler').addEventListener('click', function() {
+                 document.getElementById('sidebarMenu').classList.toggle('show');
+             });
+
+             // Simulate search functionality
+             const searchForm = document.querySelector('#archiveSearchBtn');
+             if (searchForm) {
+                 searchForm.addEventListener('click', function() {
+                     const searchTerm = document.getElementById('archiveSearch').value.toLowerCase();
+                     if (searchTerm.trim() === '') {
+                         alert('Please enter a search term');
+                         return;
+                     }
+                    
+                    // In a real app, this would be an AJAX call to the server
+                     console.log('Searching for:', searchTerm);
+                     alert('In a real application, this would search for: ' + searchTerm);
+                 });
+            }
+
+             // Simulate document actions
+             document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     const action = this.textContent.trim();
+                    if (action === 'View' || action === 'Process' || action === 'Review' || action === 'Respond') {
+                         alert('This would open the document details in a real application');
+                     } else if (action === 'Track') {
+                         alert('This would show document tracking information');
+                    } else if (action === 'Retrieve') {
+                         alert('This would retrieve the archived document');
+                     }
+                 });
+             });
+
+            // Simulate user management actions
+         document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+               btn.addEventListener('click', function() {
+                     if (this.textContent.trim() === 'Deactivate') {
+                         if (confirm('Are you sure you want to deactivate this user?')) {
+                            alert('User would be deactivated in a real application');
+                         }
+                     }
+                });
+             });
+        });
+     </script>
+
+</body></html>

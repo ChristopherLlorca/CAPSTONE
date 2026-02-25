@@ -1,0 +1,480 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LHS - Document Tracking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #e9ecef;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .sidebar {
+            background-color: white;
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar .nav-link {
+            color: #495057;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .document-card:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .progress-tracker {
+            position: relative;
+            height: 5px;
+            background-color: #e9ecef;
+            margin: 20px 0;
+        }
+        .progress-tracker .progress-step {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+        }
+        .progress-tracker .step-1 { left: 0%; background-color: var(--primary-color); width: 25%; }
+        .progress-tracker .step-2 { left: 25%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-3 { left: 50%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-4 { left: 75%; background-color: #adb5bd; width: 25%; }
+        .tracker-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 3px solid;
+            border-radius: 50%;
+            top: -8px;
+        }
+        .tracker-point.active {
+            border-color: var(--primary-color);
+        }
+        .tracker-point.inactive {
+            border-color: #adb5bd;
+        }
+        .tracker-point-1 { left: 0%; }
+        .tracker-point-2 { left: 25%; }
+        .tracker-point-3 { left: 50%; }
+        .tracker-point-4 { left: 75%; }
+        .tracker-label {
+            position: absolute;
+            top: 15px;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 80px;
+            margin-left: -40px;
+        }
+        .form-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .search-highlight {
+            background-color: yellow;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Dashboard.html">
+                <img src="lhs-reglogo.png" alt="LHS Logo">
+                <span class="ms-2">LHS - Document Tracking System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> LHS REGISTRAR ADMIN 
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse py-3" id="sidebarMenu">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link " href="Dashboard.html">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="NewDocument.html">
+                            <i class="bi bi-file-earmark-plus"></i> New Document
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Incoming.html">
+                            <i class="bi bi-inbox"></i> Incoming
+                            <span class="badge bg-danger float-end">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Outgoing.html">
+                            <i class="bi bi-send"></i> Outgoing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Search.html">
+                            <i class="bi bi-search"></i> Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Reports.html">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Users.html">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </li>
+                                        <li class="nav-item">
+                        <a class="nav-link " href="Archive.html">
+                            <i class="bi bi-archive"></i> Archive
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                                    <!-- Users Page -->
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">User Management</h1>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">
+                            <i class="bi bi-plus-circle"></i> Add User
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">System Users</h5>
+                                <div class="input-group" style="width: 300px;">
+                                    <input type="text" class="form-control" placeholder="Search users...">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Last Login</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">JC</div>
+                    <div>
+                        <div class="fw-bold">Jose Cruz</div>
+                        <div class="text-muted small">jose.cruz@paranaque.gov.ph</div>
+                    </div>
+                </div>
+            </td>
+            <td>Vice Mayor's Office</td>
+            <td><span class="badge bg-primary">Chief of Staff</span></td>
+            <td>2023-06-15 14:30</td>
+            <td><span class="badge bg-success">Active</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Deactivate</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">LS</div>
+                    <div>
+                        <div class="fw-bold">Liza Santos</div>
+                        <div class="text-muted small">liza.santos@paranaque.gov.ph</div>
+                    </div>
+                </div>
+            </td>
+            <td>Sangguniang Panlungsod Secretariat</td>
+            <td><span class="badge bg-info">Secretariat Staff</span></td>
+            <td>2023-06-15 10:15</td>
+            <td><span class="badge bg-success">Active</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Deactivate</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">MR</div>
+                    <div>
+                        <div class="fw-bold">Mario Reyes</div>
+                        <div class="text-muted small">mario.reyes@paranaque.gov.ph</div>
+                    </div>
+                </div>
+            </td>
+            <td>City Treasurer's Office</td>
+            <td><span class="badge bg-secondary">Treasury Staff</span></td>
+            <td>2023-06-14 16:45</td>
+            <td><span class="badge bg-success">Active</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Deactivate</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">AC</div>
+                    <div>
+                        <div class="fw-bold">Anna Cruz</div>
+                        <div class="text-muted small">anna.cruz@paranaque.gov.ph</div>
+                    </div>
+                </div>
+            </td>
+            <td>City Legal Office</td>
+            <td><span class="badge bg-success">Legal Officer</span></td>
+            <td>2023-06-13 09:20</td>
+            <td><span class="badge bg-success">Active</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Deactivate</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+                            </div>
+                            <nav aria-label="Page navigation" class="mt-3">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- New User Modal -->
+                    <div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="newUserModalLabel">Add New User</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="userFullName" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="userFullName" required="">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="userEmail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="userEmail" required="">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="userDepartment" class="form-label">Department</label>
+                                            <select class="form-select" id="userDepartment" required="">
+                                                <option value="">Select department</option>
+                                                <option value="vice-mayor">Vice Mayor's Office</option>
+                                                <option value="sanggunian">Sangguniang Panlungsod Secretariat</option>
+                                                <option value="treasury">City Treasurer's Office</option>
+                                                <option value="budget">Budget Office</option>
+                                                <option value="accounting">Accounting Office</option>
+                                                <option value="legal">City Legal Office</option>
+                                                <option value="admin">City Administrator's Office</option>
+                                                <option value="records">Records Management Office</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="userRole" class="form-label">Role</label>
+                                            <select class="form-select" id="userRole" required="">
+                                                <option value="">Select role</option>
+                                                <option value="chief-of-staff">Chief of Staff</option>
+                                                <option value="executive-assistant">Executive Assistant</option>
+                                                <option value="secretariat-staff">Secretariat Staff</option>
+                                                <option value="clerk">Clerk</option>
+                                                <option value="reviewer">Reviewer</option>
+                                                <option value="approver">Approver</option>
+                                                <option value="admin">Administrator</option>
+                                                <option value="legal-officer">Legal Officer</option>
+                                                <option value="budget-officer">Budget Officer</option>
+                                                <option value="treasurer-staff">Treasury Staff</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="userPassword" class="form-label">Temporary Password</label>
+                                            <input type="password" class="form-control" id="userPassword" required="">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary">Create User</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="text-muted">© 2025 Lagro High School - Document Tracking System</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="text-muted">Version 1.0.0</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+             // Toggle sidebar on mobile
+             document.querySelector('.navbar-toggler').addEventListener('click', function() {
+                 document.getElementById('sidebarMenu').classList.toggle('show');
+             });
+
+             // Simulate search functionality
+             const searchForm = document.querySelector('#archiveSearchBtn');
+             if (searchForm) {
+                 searchForm.addEventListener('click', function() {
+                     const searchTerm = document.getElementById('archiveSearch').value.toLowerCase();
+                     if (searchTerm.trim() === '') {
+                         alert('Please enter a search term');
+                         return;
+                     }
+                    
+                     // In a real app, this would be an AJAX call to the server
+                     console.log('Searching for:', searchTerm);
+                     alert('In a real application, this would search for: ' + searchTerm);
+                 });
+             }
+
+             // Simulate document actions
+             document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     const action = this.textContent.trim();
+                     if (action === 'View' || action === 'Process' || action === 'Review' || action === 'Respond') {
+                         alert('This would open the document details in a real application');
+                     } else if (action === 'Track') {
+                         alert('This would show document tracking information');
+                     } else if (action === 'Retrieve') {
+                         alert('This would retrieve the archived document');
+                     }
+                 });
+             });
+
+             // Simulate user management actions
+             document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     if (this.textContent.trim() === 'Deactivate') {
+                         if (confirm('Are you sure you want to deactivate this user?')) {
+                             alert('User would be deactivated in a real application');
+                         }
+                     }
+                 });
+             });
+         });
+     </script>
+
+</body></html>

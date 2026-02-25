@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Login</title>
+    
+    <!-- INTER FONT LINK RE-ADDED -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Define custom colors */
+        :root {
+            --primary-green: #52a352; /* Light green/Lime */
+            --dark-text: #2c5210; /* Dark green for text */
+            --light-bg: #f7f7f7;
+            --white: #ffffff;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-700: #4b5563;
+            --gray-800: #1f2937;
+        }
+
+        /* Base Styles (Replaces Tailwind Base) */  
+        body {
+            /* FONT FAMILY UPDATED TO INTER */
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-green);
+            color: var(--dark-text);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        nav a {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            text-transform: uppercase;
+            margin-right: 1.5rem; /* space-x-6 (approx) */
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Content Layout */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+       /* 1. Set up the Main Container for the blurred background */
+        .main-container {
+            width: 100%;
+            height: 100%;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* Crucial for pseudo-element positioning */
+            z-index: 0; /* Establishes stacking context */
+        }
+        
+        /* 2. Create the BLURRED BACKGROUND layer using a pseudo-element */
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* Apply the background image here */
+            background-image: url('bg.webp'); 
+            background-size: cover;
+            background-position: center;
+            z-index: -1; /* Push the blurred layer behind everything */
+            
+            /* Apply the BLUR Filter */
+            filter: blur(5px); /* Adjust the pixel value for desired blur */
+        }
+
+        /* 3. Left Panel (Informative Text) - Now just a dark overlay for text contrast */
+        #left-panel {
+            display: none;
+            color: var(--white); 
+            position: relative; /* Ensure it stacks over the blurred background */
+            z-index: 1; /* Keep content above the blur layer */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20rem;
+            /* Dark overlay for text readability against the blurred image */
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+
+        /* 4. Right Panel (Login Form) - Semi-transparent white overlay */
+        #right-panel {
+            width: 100%;
+            /* Semi-transparent white background to dim the blurred image */
+            background-color: rgba(255, 255, 255, 0.75); /* White with 75% opacity */
+            position: relative; /* Ensure it stacks over the blurred background */
+            z-index: 1; /* Keep content above the blur layer */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem;
+        }
+
+        /* Media Query for Desktop/Tablet Layout (md breakpoint) */
+        @media (min-width: 768px) {
+            .main-container {
+                flex-direction: row;
+            }
+            #left-panel {
+                display: flex; /* visible on md+ */
+                width: 50%;
+            }
+            #right-panel {
+                width: 50%;
+                padding: 3rem 4rem; /* sm:p-12 */
+            }
+        }
+        
+        /* Form Styling */
+        .logo {
+            width: 6rem; /* w-24 */
+            height: 6rem; /* h-24 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .form-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 2rem; /* mb-8 */
+            color: var(--gray-800);
+            letter-spacing: 0.025em; /* tracking-wide */
+        }
+        .form-wrapper {
+            width: 100%;
+            max-width: 24rem; /* max-w-sm */
+        }
+        .input-group {
+            margin-bottom: 1.25rem; /* mb-5 */
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem; /* px-4 py-3 */
+            border: 2px solid var(--gray-300);
+            border-radius: 0.75rem; /* rounded-xl */
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: var(--primary-green);
+        }
+
+        /* Links Section */
+        .link-section {
+            display: flex;
+            justify-content: space-between; /* justify-between */
+            font-size: 0.75rem; /* text-xs */
+            margin-bottom: 2rem; /* mb-8 */
+        }
+        .link-section a {
+            color: var(--gray-500);
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .link-section a:hover {
+            color: var(--white); /* Changed hover color to white for better visibility against dark text */
+            text-decoration: underline;
+        }
+
+        /* Button Styling */
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem; /* py-3 */
+            background-color: var(--primary-green);
+            color: var(--dark-text);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        .login-btn:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* hover:shadow-xl */
+            opacity: 0.9; /* hover:bg-opacity-90 */
+            transform: scale(1.01);
+        }
+
+        /* Message Box */
+        #messageBox {
+            margin-top: 1.5rem; /* mt-6 */
+            padding: 0.75rem; /* p-3 */
+            background-color: #fee2e2; /* bg-red-100 */
+            color: #b91c1c; /* text-red-700 */
+            border-radius: 0.5rem; /* rounded-lg */
+            width: 100%;
+            max-width: 24rem; /* max-w-sm */
+            font-size: 0.875rem;
+        }
+        .hidden {
+            display: none;
+        }
+        .bg-green {
+            background-color: #d1fae5; /* bg-green-100 equivalent */
+            color: #065f46; /* text-green-700 equivalent */
+        }
+
+        /* Left Panel Text Specifics */
+        #left-panel h2 {
+            font-size: 3rem; /* text-5xl */
+            font-weight: 800; /* font-extrabold */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        #left-panel p {
+            font-size: 1.25rem; /* text-xl */
+            font-style: italic;
+            max-width: 28rem; /* max-w-sm */
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header>
+        <nav>
+            <a href="#">Official Web Page</a>
+            <a href="#">About</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <div class="main-container">
+            
+            <!-- Left Panel - Background Image Information -->
+            <div id="left-panel">
+                
+                <!-- INFORMATIVE TEXT SECTION -->
+                <div class="p-4">
+                    <h2>
+                        Registrar's Office Portal
+                    </h2>
+                    <p>
+                        Your reliable gateway for academic records, enrollment status, and official documents.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Panel - Login Form -->
+            <div id="right-panel">
+                
+                <!-- Logo -->
+                <img 
+                    src="lhs-reglogo.png" 
+                    alt="Registrar's Office Logo" 
+                    class="logo"
+                >
+
+                <h1 class="form-title">LOGIN</h1>
+
+                <form id="loginForm" class="form-wrapper" onsubmit="handleLogin(event)">
+                    
+                    <!-- ID Field -->
+                    <div class="input-group">
+                        <label for="id">ID:</label>
+                        <input type="text" id="id" placeholder="Enter your ID" required>
+                    </div>
+                    
+                    <!-- USERNAME Field -->
+                    <div class="input-group">
+                        <label for="username">USERNAME:</label>
+                        <input type="text" id="username" placeholder="Enter your username" required>
+                    </div>
+
+                    <!-- PASSWORD Field -->
+                    <div class="input-group" style="margin-bottom: 0.5rem;">
+                        <label for="password">PASSWORD:</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+
+                    <!-- Links: Forgot Password & Create Account -->
+                    <div class="link-section">
+                        <a href="#">FORGET PASSWORD</a>
+                        <a href="#">CREATE ACCOUNT</a>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <button type="submit" class="login-btn">
+                        LOG IN
+                    </button>
+                </form>
+
+                <!-- Simple Message Box for Feedback (instead of alert) -->
+                <div id="messageBox" class="hidden" role="alert">
+                    Please fill out all fields.
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript for form handling and message box -->
+    <script>
+        /**
+         * Converts the base64 string to an ArrayBuffer.
+         * Note: This function is not used in the current app, but is left for completeness
+         * if API calls were needed.
+         * @param {string} base64 - The base64 string.
+         * @returns {ArrayBuffer} The array buffer.
+         */
+        function base64ToArrayBuffer(base64) {
+            const binary_string = window.atob(base64);
+            const len = binary_string.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binary_string.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        const messageBox = document.getElementById('messageBox');
+
+        /**
+         * Displays a temporary message in the message box.
+         * @param {string} message - The message to display.
+         * @param {boolean} isError - If true, styles as an error. Otherwise, success.
+         */
+        function showMessage(message, isError = false) {
+            messageBox.textContent = message;
+            
+            // Reset classes
+            messageBox.classList.remove('hidden', 'bg-red', 'text-red', 'bg-green', 'text-green');
+            
+            if (isError) {
+                // Apply error styles (red)
+                messageBox.style.backgroundColor = '#fee2e2'; /* red-100 */
+                messageBox.style.color = '#b91c1c'; /* red-700 */
+            } else {
+                // Apply success styles (green)
+                messageBox.style.backgroundColor = '#d1fae5'; /* green-100 */
+                messageBox.style.color = '#065f46'; /* green-700 */
+            }
+
+            messageBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        /**
+         * Handles the login form submission.
+         * @param {Event} event - The form submission event.
+         */
+        function handleLogin(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const id = document.getElementById('id').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!id || !username || !password) {
+                showMessage("Please fill in all fields to log in.", true);
+                return;
+            }
+
+            // Simulate a network request (replace this with actual fetch/login logic)
+            console.log("Attempting to log in with:");
+            console.log(`ID: ${id}`);
+
+            // Show success message
+            showMessage("Login simulated! Check the console for details.", false);
+
+            // document.getElementById('loginForm').reset();
+        }
+
+    </script>
+</body>
+</html>
+ 
