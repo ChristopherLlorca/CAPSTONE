@@ -1,0 +1,127 @@
+:root {
+    --primary-color: #0056b3;
+    --secondary-color: #e9ecef;
+}
+body {
+    background-color: #f8f9fa;
+}
+.navbar-brand img {
+    height: 40px;
+}
+.sidebar {
+    background-color: white;
+    min-height: calc(100vh - 56px);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.sidebar .nav-link {
+    color: #495057;
+    border-radius: 5px;
+    margin: 2px 0;
+}
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+.card {
+    border: none;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.status-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.status-completed {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+.document-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.progress-tracker {
+    position: relative;
+    height: 5px;
+    background-color: #e9ecef;
+    margin: 20px 0;
+}
+.progress-tracker .progress-step {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+}
+.progress-tracker .step-1 { left: 0%; background-color: var(--primary-color); width: 25%; }
+.progress-tracker .step-2 { left: 25%; background-color: #adb5bd; width: 25%; }
+.progress-tracker .step-3 { left: 50%; background-color: #adb5bd; width: 25%; }
+.progress-tracker .step-4 { left: 75%; background-color: #adb5bd; width: 25%; }
+.tracker-point {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border: 3px solid;
+    border-radius: 50%;
+    top: -8px;
+}
+.tracker-point.active {
+    border-color: var(--primary-color);
+}
+.tracker-point.inactive {
+    border-color: #adb5bd;
+}
+.tracker-point-1 { left: 0%; }
+.tracker-point-2 { left: 25%; }
+.tracker-point-3 { left: 50%; }
+.tracker-point-4 { left: 75%; }
+.tracker-label {
+    position: absolute;
+    top: 15px;
+    font-size: 0.8rem;
+    text-align: center;
+    width: 80px;
+    margin-left: -40px;
+}
+.form-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+.search-highlight {
+    background-color: yellow;
+}
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}

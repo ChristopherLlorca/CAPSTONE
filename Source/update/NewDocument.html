@@ -1,0 +1,369 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parañaque LGU - Document Tracking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #e9ecef;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .sidebar {
+            background-color: white;
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar .nav-link {
+            color: #495057;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .document-card:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .progress-tracker {
+            position: relative;
+            height: 5px;
+            background-color: #e9ecef;
+            margin: 20px 0;
+        }
+        .progress-tracker .progress-step {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+        }
+        .progress-tracker .step-1 { left: 0%; background-color: var(--primary-color); width: 25%; }
+        .progress-tracker .step-2 { left: 25%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-3 { left: 50%; background-color: #adb5bd; width: 25%; }
+        .progress-tracker .step-4 { left: 75%; background-color: #adb5bd; width: 25%; }
+        .tracker-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 3px solid;
+            border-radius: 50%;
+            top: -8px;
+        }
+        .tracker-point.active {
+            border-color: var(--primary-color);
+        }
+        .tracker-point.inactive {
+            border-color: #adb5bd;
+        }
+        .tracker-point-1 { left: 0%; }
+        .tracker-point-2 { left: 25%; }
+        .tracker-point-3 { left: 50%; }
+        .tracker-point-4 { left: 75%; }
+        .tracker-label {
+            position: absolute;
+            top: 15px;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 80px;
+            margin-left: -40px;
+        }
+        .form-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .search-highlight {
+            background-color: yellow;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Dashboard.html">
+                <img src="lhs-reglogo.png" alt="LHS Logo">
+                <span class="ms-2">LHS - Document Tracking System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> LHS REGISTRAR ADMIN
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse py-3" id="sidebarMenu">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link " href="Dashboard.html">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="NewDocument.html">
+                            <i class="bi bi-file-earmark-plus"></i> New Document
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Incoming.html">
+                            <i class="bi bi-inbox"></i> Incoming
+                            <span class="badge bg-danger float-end">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Outgoing.html">
+                            <i class="bi bi-send"></i> Outgoing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Search.html">
+                            <i class="bi bi-search"></i> Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Reports.html">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="Users.html">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </li>
+                                        <li class="nav-item">
+                        <a class="nav-link " href="Archive.html">
+                            <i class="bi bi-archive"></i> Archive
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                                    <!-- New Document Page -->
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">New Document</h1>
+                    </div>
+
+                    <div class="form-section">
+                        <h5 class="mb-4">Document Information</h5>
+                        <form> 
+                             <div class="mb-3">
+                                <label for="studName" class="form-label">Student Name</label>
+                                <input type="text" class="form-control" id="student-name" placeholder="Name:" required="">
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="docType" class="form-label">Document/Record Type</label>
+                                    <select class="form-select" id="docType" required="">
+                                        <option value="">Select document type</option>
+                                        <option value="academic-records">Academic Records</option>
+                                        <option value="enrollment-records">Enrollment Records</option>
+                                        <option value="disciplinary-records">Disciplinary Records</option>
+                                        <option value="health-records">Health Records</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="priority" class="form-label">Priority Level</label>
+                                    <select class="form-select" id="priority" required="">
+                                        <option value="">Select priority level</option>
+                                        <option value="elementary">Elementary</option>
+                                        <option value="junior">Junior High</option>
+                                        <option value="sinior">Sinior High</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="docTitle" class="form-label">Document Title</label>
+                                <input type="text" class="form-control" id="docTitle" placeholder="Enter document title" required="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="docDescription" class="form-label">Description/Purpose</label>
+                                <textarea class="form-control" id="docDescription" rows="3" placeholder="Enter document description"></textarea>
+                            </div>
+
+                           <!-- <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="originOffice" class="form-label">Origin Office/Department</label>
+                                    <select class="form-select" id="originOffice" required="">
+                                        <option value="">Select office</option>
+                                        <option value="mayor">Mayor's Office</option>
+                                        <option value="treasury">City Treasurer's Office</option>
+                                        <option value="engineering">City Engineering Office</option>
+                                        <option value="health">City Health Office</option>
+                                        <option value="budget">Budget Office</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="targetOffice" class="form-label">Target Office/Department</label>
+                                    <select class="form-select" id="targetOffice" required="">
+                                        <option value="">Select office</option>
+                                        <option value="mayor">Mayor's Office</option>
+                                        <option value="treasury">City Treasurer's Office</option>
+                                        <option value="engineering">City Engineering Office</option>
+                                        <option value="health">City Health Office</option>
+                                        <option value="budget">Budget Office</option>
+                                    </select>
+                                </div>
+                            </div> -->
+
+                            <div class="mb-3">
+                                <label for="docUpload" class="form-label">Upload Document</label>
+                                <input class="form-control" type="file" id="docUpload" required="">
+                                <div class="form-text">Supported formats: PDF, DOCX, XLSX (Max 10MB)</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-outline-secondary me-2">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit Document</button>
+                            </div>
+                        </form>
+                    </div>
+
+                            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="text-muted">© 2025 Lagro High School - Document Tracking System</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="text-muted">Version 1.0.0</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    // <script>
+         document.addEventListener('DOMContentLoaded', function() {
+             // Toggle sidebar on mobile
+             document.querySelector('.navbar-toggler').addEventListener('click', function() {
+                 document.getElementById('sidebarMenu').classList.toggle('show');
+             });
+
+             // Simulate search functionality
+             const searchForm = document.querySelector('#archiveSearchBtn');
+             if (searchForm) {
+                 searchForm.addEventListener('click', function() {
+                     const searchTerm = document.getElementById('archiveSearch').value.toLowerCase();
+                     if (searchTerm.trim() === '') {
+                         alert('Please enter a search term');
+                         return;
+                     }
+                    
+                     // In a real app, this would be an AJAX call to the server
+                     console.log('Searching for:', searchTerm);
+                     alert('In a real application, this would search for: ' + searchTerm);
+                 });
+             }
+
+             // Simulate document actions
+             document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     const action = this.textContent.trim();
+                     if (action === 'View' || action === 'Process' || action === 'Review' || action === 'Respond') {
+                         alert('This would open the document details in a real application');
+                     } else if (action === 'Track') {
+                         alert('This would show document tracking information');
+                     } else if (action === 'Retrieve') {
+                         alert('This would retrieve the archived document');
+                     }
+                 });
+             });
+
+             // Simulate user management actions
+             document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+                 btn.addEventListener('click', function() {
+                     if (this.textContent.trim() === 'Deactivate') {
+                         if (confirm('Are you sure you want to deactivate this user?')) {
+                             alert('User would be deactivated in a real application');
+                         }
+                     }
+                 });
+             });
+         });
+     </script>
+
+</body></html>
